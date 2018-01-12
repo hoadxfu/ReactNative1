@@ -30,20 +30,31 @@ export default class App extends Component {
     const { targetInput, userInputIndex, score } = this.state;
     input === targetInput[userInputIndex]
     ? this.setState({
-      score: score + 1,
       userInputIndex: userInputIndex + 1
-    }, () => this.state.userInputIndex === this.state.targetInput.length && this._random())
+    }, this._toNextLevel)
     : this.setState({ gameState: GAME_OVER });
   }
+
+  _toNextLevel = () => {
+    const { targetInput, userInputIndex, score } = this.state;
+    if (userInputIndex === targetInput.length) {
+      this.setState({ 
+        score: score + 1,
+        targetInput: this._nextLevel(targetInput),
+        userInputIndex: 0
+      });
+    }
+  }
+
+  _nextLevel = (targetInput) => targetInput.concat(this._randomInt(0, 3))
+
+  _randomInt = (min, max) => Math.floor((Math.random() * (max - min)) + min)
 
   _random = () => {
     let targetInput = Array.from(
       { length: this.state.userInputIndex + 1 },
-      () => Math.floor((Math.random() * 3) + 0));
-    this.setState({ 
-      targetInput,
-      userInputIndex: 0
-    });
+      () => this._randomInt(0, 3));
+    this.setState({ targetInput });
   }
 
   _replay = () => {
