@@ -14,6 +14,7 @@ import {
 import ColorButton from './components/ColorButton';
 import GamePlay from './containers/GamePlay';
 import GameOver from './containers/GameOver';
+import StyleDemo from './containers/StyleDemo';
 
 const GAME_PLAY = 0;
 const GAME_OVER = 1;
@@ -73,28 +74,10 @@ export default class App extends Component {
   render() {
     const { score, targetInput, gameState } = this.state;
     return (
+      // <StyleDemo />
       gameState == GAME_PLAY
       ? <GamePlay score={score} targetInput={targetInput} onPress={this._onPress} />
       : <GameOver score={score} replay={this._replay} />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
