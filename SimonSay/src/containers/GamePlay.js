@@ -3,7 +3,8 @@ import {
   Text,
   View,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Platform
 } from 'react-native';
 import ColorButton from '../components/ColorButton';
 
@@ -41,8 +42,8 @@ class GamePlay extends Component {
     return (
       <View style={[ styles.container, containerStyle ]} onLayout={this._onLayout}>
         <View style={styles.scoreContainer}>
-          <Text style={{ fontSize: 28, paddingBottom: 12 }}>Score</Text>
-          <Text style={{ fontSize: 28 }}>{this.props.score}</Text>
+          <Text style={{ fontSize: 36, paddingBottom: 16 }}>Score</Text>
+          <Text style={{ fontSize: 34 }}>{this.props.score}</Text>
           <Text>{this.props.targetInput.toString()}</Text>
         </View>
         <View style={[ styles.gameContainer, { width: gameBoardSize } ]}>
@@ -59,11 +60,11 @@ class GamePlay extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 18
+    marginTop: (Platform.OS === 'ios') ? 20 : 0
   },
   scoreContainer: {
     flexGrow: 1,
-    paddingTop: 12,
+    // paddingTop: 12,
     // paddingBottom: 12,
     // paddingLeft: 24,
     // paddingRight: 24,
@@ -73,7 +74,6 @@ const styles = StyleSheet.create({
   gameContainer: {
     flexGrow: 1,
     flexDirection: 'row',
-    alignItems: 'flex-start',
     flexWrap: 'wrap'
   },
   row: {

@@ -12,7 +12,15 @@ class ColorButton extends Component {
   render() {
     const { size } = this.props;
     return (
-      <TouchableOpacity style={[ styles.container, { width: size/2, height: size/2 } ]} onPress={this.props.onPress}>
+      <TouchableOpacity
+        style={[
+          styles.container,
+          {
+            width: size/2,
+            height: size/2
+          }
+        ]} 
+        onPress={this.props.onPress}>
         <View style={[ styles.colorView,
           { backgroundColor: this.props.background } 
         ]}></View>
@@ -28,13 +36,13 @@ const styles = StyleSheet.create({
   colorView: {
     flex: 1,
     borderRadius: 4,
-    shadowRadius: 3,
-    shadowOffset: {
-      width: 0,
-      height: 0
-    },
-    shadowColor: 'black',
-    shadowOpacity: 0.3
+    // shadowRadius: 3,
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 0
+    // },
+    // shadowColor: 'black',
+    // shadowOpacity: 0.3
   }
 })
 
