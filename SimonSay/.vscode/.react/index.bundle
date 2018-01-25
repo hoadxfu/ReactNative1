@@ -58548,6 +58548,10 @@ __d(function (global, require, module, exports, _dependencyMap) {
 
   var _StyleDemo2 = _interopRequireDefault(_StyleDemo);
 
+  var _reactNativeSound = require(_dependencyMap[7], "react-native-sound");
+
+  var _reactNativeSound2 = _interopRequireDefault(_reactNativeSound);
+
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -58575,11 +58579,12 @@ __d(function (global, require, module, exports, _dependencyMap) {
     };
   }
 
-  var GAME_PLAY = 0;
-  var GAME_OVER = 1;
+  var GAME_PLAY = 1;
+  var HINTING = 0;
+  var GAME_OVER = -1;
 
-  var App = _wrapComponent("App")(function (_Component) {
-    _inherits(App, _Component);
+  var App = _wrapComponent("App")(function (_PureComponent) {
+    _inherits(App, _PureComponent);
 
     function App() {
       var _ref;
@@ -58596,11 +58601,13 @@ __d(function (global, require, module, exports, _dependencyMap) {
         score: 0,
         targetInput: [],
         userInputIndex: 0,
-        gameState: GAME_PLAY
+        gameState: GAME_PLAY,
+        flashIndex: 0
       }, _this._onPress = function (input) {
         var _this$state = _this.state,
             targetInput = _this$state.targetInput,
             userInputIndex = _this$state.userInputIndex,
+            flashIndex = _this$state.flashIndex,
             score = _this$state.score;
         input === targetInput[userInputIndex] ? _this.setState({
           userInputIndex: userInputIndex + 1
@@ -58618,6 +58625,8 @@ __d(function (global, require, module, exports, _dependencyMap) {
             score: score + 1,
             targetInput: _this._nextLevel(targetInput),
             userInputIndex: 0
+          }, function () {
+            setTimeout(_this._onButtonFlashCompleted, 500);
           });
         }
       }, _this._nextLevel = function (targetInput) {
@@ -58634,12 +58643,25 @@ __d(function (global, require, module, exports, _dependencyMap) {
         _this.setState({
           targetInput: targetInput
         });
+      }, _this._onButtonFlashCompleted = function () {
+        var _this$state3 = _this.state,
+            flashIndex = _this$state3.flashIndex,
+            targetInput = _this$state3.targetInput;
+
+        _this.setState({
+          flashIndex: -1
+        }, function () {
+          _this.setState({
+            flashIndex: flashIndex < targetInput.length - 1 ? flashIndex + 1 : -1
+          });
+        });
       }, _this._replay = function () {
         _this.setState({
           score: 0,
           targetInput: [],
           userInputIndex: 0,
-          gameState: GAME_PLAY
+          gameState: GAME_PLAY,
+          flashIndex: 0
         }, function () {
           return _this._random();
         });
@@ -58657,31 +58679,34 @@ __d(function (global, require, module, exports, _dependencyMap) {
         var _state = this.state,
             score = _state.score,
             targetInput = _state.targetInput,
+            flashIndex = _state.flashIndex,
             gameState = _state.gameState;
         return gameState == GAME_PLAY ? _react3.default.createElement(_GamePlay2.default, {
           score: score,
           targetInput: targetInput,
+          flashIndex: flashIndex,
           onPress: this._onPress,
+          onButtonFlashCompleted: this._onButtonFlashCompleted,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 79
+            lineNumber: 98
           }
         }) : _react3.default.createElement(_GameOver2.default, {
           score: score,
           replay: this._replay,
           __source: {
             fileName: _jsxFileName,
-            lineNumber: 80
+            lineNumber: 105
           }
         });
       }
     }]);
 
     return App;
-  }(_react2.Component));
+  }(_react2.PureComponent));
 
   exports.default = App;
-},489,[109,128,12,490,491,492,494],"SimonSay/src/App.js");
+},489,[109,128,12,490,491,493,494,492],"SimonSay/src/App.js");
 __d(function (global, require, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -58732,35 +58757,69 @@ __d(function (global, require, module, exports, _dependencyMap) {
       width = _Dimensions$get.width,
       height = _Dimensions$get.height;
 
-  var ColorButton = _wrapComponent("ColorButton")(function (_Component) {
-    _inherits(ColorButton, _Component);
+  var ColorButton = _wrapComponent("ColorButton")(function (_PureComponent) {
+    _inherits(ColorButton, _PureComponent);
 
     function ColorButton() {
+      var _ref;
+
+      var _temp, _this, _ret;
+
       _classCallCheck(this, ColorButton);
 
-      return _possibleConstructorReturn(this, (ColorButton.__proto__ || Object.getPrototypeOf(ColorButton)).apply(this, arguments));
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ColorButton.__proto__ || Object.getPrototypeOf(ColorButton)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+        buttonOpacity: new _reactNative.Animated.Value(1)
+      }, _this._flash = function () {
+        _reactNative.Animated.sequence([_reactNative.Animated.timing(_this.state.buttonOpacity, {
+          toValue: 0.3,
+          duration: 150,
+          easing: _reactNative.Easing.ease.in
+        }), _reactNative.Animated.delay(200), _reactNative.Animated.timing(_this.state.buttonOpacity, {
+          toValue: 1,
+          duration: 150,
+          easing: _reactNative.Easing.ease.out
+        })]).start(_this.props.onFlashCompleted);
+      }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(ColorButton, [{
+      key: "componentWillReceiveProps",
+      value: function componentWillReceiveProps(nextProps) {
+        if (nextProps.isFlashing !== this.props.isFlashing && nextProps.isFlashing) {
+          this._flash();
+        }
+      }
+    }, {
       key: "render",
       value: function render() {
+        var _props = this.props,
+            size = _props.size,
+            isFlashing = _props.isFlashing;
         return _react3.default.createElement(
           _reactNative.TouchableOpacity,
           {
-            style: styles.container,
+            style: [styles.container, {
+              width: size / 2,
+              height: size / 2
+            }],
             onPress: this.props.onPress,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 14
+              lineNumber: 46
             }
           },
-          _react3.default.createElement(_reactNative.View, {
+          _react3.default.createElement(_reactNative.Animated.View, {
             style: [styles.colorView, {
+              opacity: this.state.buttonOpacity,
               backgroundColor: this.props.background
             }],
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 15
+              lineNumber: 55
             }
           })
         );
@@ -58768,24 +58827,15 @@ __d(function (global, require, module, exports, _dependencyMap) {
     }]);
 
     return ColorButton;
-  }(_react2.Component));
+  }(_react2.PureComponent));
 
   var styles = _reactNative.StyleSheet.create({
     container: {
-      width: width / 2,
-      height: width / 2,
       padding: 12
     },
     colorView: {
       flex: 1,
-      borderRadius: 4,
-      shadowRadius: 3,
-      shadowOffset: {
-        width: 0,
-        height: 0
-      },
-      shadowColor: 'black',
-      shadowOpacity: 0.3
+      borderRadius: 4
     }
   });
 
@@ -58804,6 +58854,8 @@ __d(function (global, require, module, exports, _dependencyMap) {
 
   var _index2 = _interopRequireDefault(_index);
 
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   var _jsxFileName = "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/SimonSay/src/containers/GamePlay.js";
 
   var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -58813,6 +58865,10 @@ __d(function (global, require, module, exports, _dependencyMap) {
   var _ColorButton = require(_dependencyMap[3], "../components/ColorButton");
 
   var _ColorButton2 = _interopRequireDefault(_ColorButton);
+
+  var _reactNativeSound = require(_dependencyMap[4], "react-native-sound");
+
+  var _reactNativeSound2 = _interopRequireDefault(_reactNativeSound);
 
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -58845,8 +58901,8 @@ __d(function (global, require, module, exports, _dependencyMap) {
       width = _Dimensions$get.width,
       height = _Dimensions$get.height;
 
-  var GamePlay = _wrapComponent("GamePlay")(function (_Component) {
-    _inherits(GamePlay, _Component);
+  var GamePlay = _wrapComponent("GamePlay")(function (_PureComponent) {
+    _inherits(GamePlay, _PureComponent);
 
     function GamePlay() {
       var _ref;
@@ -58861,7 +58917,8 @@ __d(function (global, require, module, exports, _dependencyMap) {
 
       return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = GamePlay.__proto__ || Object.getPrototypeOf(GamePlay)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
         gameBoardSize: Math.min(width, height),
-        containerStyle: null
+        containerStyle: null,
+        buttonColors: ['#84FF72', '#FF3605', '#9C11E8', '#17A2FF']
       }, _this._onLayout = function (event) {
         var _event$nativeEvent$la = event.nativeEvent.layout,
             width = _event$nativeEvent$la.width,
@@ -58882,23 +58939,55 @@ __d(function (global, require, module, exports, _dependencyMap) {
             }
           });
         }
+      }, _this._propsForButtonIndex = function (index) {
+        var _this$state = _this.state,
+            gameBoardSize = _this$state.gameBoardSize,
+            buttonColors = _this$state.buttonColors;
+        var _this$props = _this.props,
+            _onPress = _this$props.onPress,
+            targetInput = _this$props.targetInput,
+            flashIndex = _this$props.flashIndex,
+            onButtonFlashCompleted = _this$props.onButtonFlashCompleted;
+        return {
+          onPress: function onPress() {
+            return _onPress(index);
+          },
+          isFlashing: targetInput[flashIndex] === index,
+          onFlashCompleted: onButtonFlashCompleted,
+          size: gameBoardSize,
+          background: buttonColors[index]
+        };
       }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(GamePlay, [{
+      key: "componentDidMount",
+      value: function componentDidMount() {
+        _reactNativeSound2.default.setCategory('Playback');
+
+        var whoosh = new _reactNativeSound2.default('pling1.mp3', _reactNativeSound2.default.MAIN_BUNDLE, function (error) {
+          if (error) {
+            console.log('failed to load the sound', error);
+            return;
+          }
+
+          whoosh.play();
+        });
+      }
+    }, {
       key: "render",
       value: function render() {
-        var _this2 = this;
-
-        var gameBoardSize = this.state.gameBoardSize;
+        var _state = this.state,
+            gameBoardSize = _state.gameBoardSize,
+            containerStyle = _state.containerStyle;
         return _react3.default.createElement(
           _reactNative.View,
           {
-            style: [styles.container, this.state.containerStyle],
+            style: [styles.container, containerStyle],
             onLayout: this._onLayout,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 41
+              lineNumber: 72
             }
           },
           _react3.default.createElement(
@@ -58907,28 +58996,35 @@ __d(function (global, require, module, exports, _dependencyMap) {
               style: styles.scoreContainer,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 42
+                lineNumber: 73
               }
             },
             _react3.default.createElement(
               _reactNative.Text,
               {
+                style: {
+                  fontSize: 36,
+                  paddingBottom: 16
+                },
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 43
+                  lineNumber: 74
                 }
               },
-              this.props.score
+              "Score"
             ),
             _react3.default.createElement(
               _reactNative.Text,
               {
+                style: {
+                  fontSize: 34
+                },
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 44
+                  lineNumber: 75
                 }
               },
-              this.props.targetInput.toString()
+              this.props.score
             )
           ),
           _react3.default.createElement(
@@ -58939,66 +59035,54 @@ __d(function (global, require, module, exports, _dependencyMap) {
               }],
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 46
+                lineNumber: 77
               }
             },
-            _react3.default.createElement(_ColorButton2.default, {
-              onPress: function onPress() {
-                return _this2.props.onPress(0);
-              },
-              background: "red",
+            _react3.default.createElement(_ColorButton2.default, _extends({}, this._propsForButtonIndex(0), {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 47
+                lineNumber: 78
               }
-            }),
-            _react3.default.createElement(_ColorButton2.default, {
-              onPress: function onPress() {
-                return _this2.props.onPress(1);
-              },
-              background: "yellow",
+            })),
+            _react3.default.createElement(_ColorButton2.default, _extends({}, this._propsForButtonIndex(1), {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 48
+                lineNumber: 79
               }
-            }),
-            _react3.default.createElement(_ColorButton2.default, {
-              onPress: function onPress() {
-                return _this2.props.onPress(2);
-              },
-              background: "blue",
+            })),
+            _react3.default.createElement(_ColorButton2.default, _extends({}, this._propsForButtonIndex(2), {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 49
+                lineNumber: 80
               }
-            }),
-            _react3.default.createElement(_ColorButton2.default, {
-              onPress: function onPress() {
-                return _this2.props.onPress(3);
-              },
-              background: "green",
+            })),
+            _react3.default.createElement(_ColorButton2.default, _extends({}, this._propsForButtonIndex(3), {
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 50
+                lineNumber: 81
               }
-            })
+            }))
           )
         );
       }
     }]);
 
     return GamePlay;
-  }(_react2.Component));
+  }(_react2.PureComponent));
 
   var styles = _reactNative.StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 20
+      backgroundColor: '#E8CA5F'
     },
-    scoreContainer: {},
+    scoreContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
     gameContainer: {
+      flexGrow: 1,
       flexDirection: 'row',
-      alignItems: 'flex-start',
       flexWrap: 'wrap'
     },
     row: {
@@ -59008,7 +59092,238 @@ __d(function (global, require, module, exports, _dependencyMap) {
   });
 
   exports.default = GamePlay;
-},491,[109,128,12,490],"SimonSay/src/containers/GamePlay.js");
+},491,[109,128,12,490,492],"SimonSay/src/containers/GamePlay.js");
+__d(function (global, require, module, exports, _dependencyMap) {
+  'use strict';
+
+  var RNSound = require(_dependencyMap[0], 'react-native').NativeModules.RNSound;
+
+  var IsAndroid = RNSound.IsAndroid;
+  var IsWindows = RNSound.IsWindows;
+
+  var resolveAssetSource = require(_dependencyMap[1], "react-native/Libraries/Image/resolveAssetSource");
+
+  var nextKey = 0;
+
+  function isRelativePath(path) {
+    return !/^(\/|http(s?))/.test(path);
+  }
+
+  function Sound(filename, basePath, onError, options) {
+    var _this = this;
+
+    var asset = resolveAssetSource(filename);
+
+    if (asset) {
+      this._filename = asset.uri;
+      onError = basePath;
+    } else {
+      this._filename = basePath ? basePath + '/' + filename : filename;
+
+      if (IsAndroid && !basePath && isRelativePath(filename)) {
+        this._filename = filename.toLowerCase().replace(/\.[^.]+$/, '');
+      }
+    }
+
+    this._loaded = false;
+    this._key = nextKey++;
+    this._duration = -1;
+    this._numberOfChannels = -1;
+    this._volume = 1;
+    this._pan = 0;
+    this._numberOfLoops = 0;
+    this._speed = 1;
+    RNSound.prepare(this._filename, this._key, options || {}, function (error, props) {
+      if (props) {
+        if (typeof props.duration === 'number') {
+          _this._duration = props.duration;
+        }
+
+        if (typeof props.numberOfChannels === 'number') {
+          _this._numberOfChannels = props.numberOfChannels;
+        }
+      }
+
+      if (error === null) {
+        _this._loaded = true;
+      }
+
+      onError && onError(error);
+    });
+  }
+
+  Sound.prototype.isLoaded = function () {
+    return this._loaded;
+  };
+
+  Sound.prototype.play = function (onEnd) {
+    if (this._loaded) {
+      RNSound.play(this._key, function (successfully) {
+        return onEnd && onEnd(successfully);
+      });
+    } else {
+      onEnd && onEnd(false);
+    }
+
+    return this;
+  };
+
+  Sound.prototype.pause = function (callback) {
+    if (this._loaded) {
+      RNSound.pause(this._key, function () {
+        callback && callback();
+      });
+    }
+
+    return this;
+  };
+
+  Sound.prototype.stop = function (callback) {
+    if (this._loaded) {
+      RNSound.stop(this._key, function () {
+        callback && callback();
+      });
+    }
+
+    return this;
+  };
+
+  Sound.prototype.release = function () {
+    if (this._loaded) {
+      RNSound.release(this._key);
+    }
+
+    return this;
+  };
+
+  Sound.prototype.getDuration = function () {
+    return this._duration;
+  };
+
+  Sound.prototype.getNumberOfChannels = function () {
+    return this._numberOfChannels;
+  };
+
+  Sound.prototype.getVolume = function () {
+    return this._volume;
+  };
+
+  Sound.prototype.setVolume = function (value) {
+    this._volume = value;
+
+    if (this._loaded) {
+      if (IsAndroid || IsWindows) {
+        RNSound.setVolume(this._key, value, value);
+      } else {
+        RNSound.setVolume(this._key, value);
+      }
+    }
+
+    return this;
+  };
+
+  Sound.prototype.getPan = function () {
+    return this._pan;
+  };
+
+  Sound.prototype.setPan = function (value) {
+    if (this._loaded) {
+      RNSound.setPan(this._key, this._pan = value);
+    }
+
+    return this;
+  };
+
+  Sound.prototype.getNumberOfLoops = function () {
+    return this._numberOfLoops;
+  };
+
+  Sound.prototype.setNumberOfLoops = function (value) {
+    this._numberOfLoops = value;
+
+    if (this._loaded) {
+      if (IsAndroid || IsWindows) {
+        RNSound.setLooping(this._key, !!value);
+      } else {
+        RNSound.setNumberOfLoops(this._key, value);
+      }
+    }
+
+    return this;
+  };
+
+  Sound.prototype.setSpeed = function (value) {
+    this._setSpeed = value;
+
+    if (this._loaded) {
+      if (!IsWindows) {
+        RNSound.setSpeed(this._key, value);
+      }
+    }
+
+    return this;
+  };
+
+  Sound.prototype.getCurrentTime = function (callback) {
+    if (this._loaded) {
+      RNSound.getCurrentTime(this._key, callback);
+    }
+  };
+
+  Sound.prototype.setCurrentTime = function (value) {
+    if (this._loaded) {
+      RNSound.setCurrentTime(this._key, value);
+    }
+
+    return this;
+  };
+
+  Sound.prototype.setSpeakerphoneOn = function (value) {
+    if (IsAndroid) {
+      RNSound.setSpeakerphoneOn(this._key, value);
+    }
+  };
+
+  Sound.prototype.setCategory = function (value) {
+    Sound.setCategory(value, false);
+  };
+
+  Sound.enable = function (enabled) {
+    RNSound.enable(enabled);
+  };
+
+  Sound.enableInSilenceMode = function (enabled) {
+    if (!IsAndroid && !IsWindows) {
+      RNSound.enableInSilenceMode(enabled);
+    }
+  };
+
+  Sound.setActive = function (value) {
+    if (!IsAndroid && !IsWindows) {
+      RNSound.setActive(value);
+    }
+  };
+
+  Sound.setCategory = function (value) {
+    var mixWithOthers = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+    if (!IsAndroid && !IsWindows) {
+      RNSound.setCategory(value, mixWithOthers);
+    }
+  };
+
+  Sound.setMode = function (value) {
+    if (!IsAndroid && !IsWindows) {
+      RNSound.setMode(value);
+    }
+  };
+
+  Sound.MAIN_BUNDLE = RNSound.MainBundlePath;
+  Sound.DOCUMENT = RNSound.NSDocumentDirectory;
+  Sound.LIBRARY = RNSound.NSLibraryDirectory;
+  Sound.CACHES = RNSound.NSCachesDirectory;
+  module.exports = Sound;
+},492,[12,324],"react-native-sound/sound.js");
 __d(function (global, require, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -59055,8 +59370,8 @@ __d(function (global, require, module, exports, _dependencyMap) {
     };
   }
 
-  var GameOver = _wrapComponent("GameOver")(function (_Component) {
-    _inherits(GameOver, _Component);
+  var GameOver = _wrapComponent("GameOver")(function (_PureComponent) {
+    _inherits(GameOver, _PureComponent);
 
     function GameOver() {
       var _ref;
@@ -59081,21 +59396,23 @@ __d(function (global, require, module, exports, _dependencyMap) {
         return _react3.default.createElement(
           _reactNative.View,
           {
-            style: {
-              marginTop: 20,
-              alignItems: 'center'
-            },
+            style: styles.container,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 13
+              lineNumber: 14
             }
           },
           _react3.default.createElement(
             _reactNative.Text,
             {
+              style: {
+                fontSize: 42,
+                color: '#fff',
+                padding: 16
+              },
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 14
+                lineNumber: 15
               }
             },
             "Game over"
@@ -59103,9 +59420,14 @@ __d(function (global, require, module, exports, _dependencyMap) {
           _react3.default.createElement(
             _reactNative.Text,
             {
+              style: {
+                fontSize: 24,
+                color: '#fff',
+                padding: 16
+              },
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 15
+                lineNumber: 16
               }
             },
             "Your score: ",
@@ -59114,21 +59436,29 @@ __d(function (global, require, module, exports, _dependencyMap) {
           _react3.default.createElement(
             _reactNative.TouchableOpacity,
             {
+              style: {
+                backgroundColor: '#5C0ED0',
+                borderRadius: 100,
+                paddingVertical: 12,
+                paddingHorizontal: 24,
+                marginTop: 12
+              },
               onPress: replay,
               __source: {
                 fileName: _jsxFileName,
-                lineNumber: 16
+                lineNumber: 17
               }
             },
             _react3.default.createElement(
               _reactNative.Text,
               {
                 style: {
-                  color: 'blue'
+                  fontSize: 18,
+                  color: '#fff'
                 },
                 __source: {
                   fileName: _jsxFileName,
-                  lineNumber: 17
+                  lineNumber: 24
                 }
               },
               "Replay"
@@ -59139,10 +59469,19 @@ __d(function (global, require, module, exports, _dependencyMap) {
     }]);
 
     return GameOver;
-  }(_react2.Component));
+  }(_react2.PureComponent));
+
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      backgroundColor: '#6610E8',
+      flex: 1,
+      justifyContent: 'center'
+    }
+  });
 
   exports.default = GameOver;
-},492,[109,128,12],"SimonSay/src/containers/GameOver.js");
+},493,[109,128,12],"SimonSay/src/containers/GameOver.js");
 __d(function (global, require, module, exports, _dependencyMap) {
   Object.defineProperty(exports, "__esModule", {
     value: true

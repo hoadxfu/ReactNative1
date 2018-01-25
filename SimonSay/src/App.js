@@ -4,7 +4,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,20 +15,23 @@ import ColorButton from './components/ColorButton';
 import GamePlay from './containers/GamePlay';
 import GameOver from './containers/GameOver';
 import StyleDemo from './containers/StyleDemo';
+import Sound from 'react-native-sound';
 
-const GAME_PLAY = 0;
-const GAME_OVER = 1;
+const GAME_PLAY = 1;
+const HINTING = 0;
+const GAME_OVER = -1;
 
-export default class App extends Component {
+export default class App extends PureComponent {
   state = {
     score: 0,
     targetInput: [],
     userInputIndex: 0,
-    gameState: GAME_PLAY
+    gameState: GAME_PLAY,
+    flashIndex: 0
   }
 
   _onPress = (input) => {
-    const { targetInput, userInputIndex, score } = this.state;
+    const { targetInput, userInputIndex, flashIndex, score } = this.state;
     input === targetInput[userInputIndex]
     ? this.setState({
       userInputIndex: userInputIndex + 1
@@ -43,8 +46,10 @@ export default class App extends Component {
         score: score + 1,
         targetInput: this._nextLevel(targetInput),
         userInputIndex: 0
+      }, () => {
+        setTimeout(this._onButtonFlashCompleted, 500);
       });
-    }
+    } 
   }
 
   _nextLevel = (targetInput) => targetInput.concat(this._randomInt(0, 3))
@@ -58,12 +63,26 @@ export default class App extends Component {
     this.setState({ targetInput });
   }
 
+  _onButtonFlashCompleted = () => {
+    const { flashIndex, targetInput } = this.state;
+    this.setState({
+      flashIndex: -1
+    }, () => {
+      this.setState({
+        flashIndex: flashIndex < targetInput.length - 1
+          ? flashIndex + 1
+          : -1
+      });
+    });
+  }
+
   _replay = () => {
     this.setState({
       score: 0,
       targetInput: [],
       userInputIndex: 0,
-      gameState: GAME_PLAY 
+      gameState: GAME_PLAY,
+      flashIndex: 0
     }, () => this._random());
   }
 
@@ -72,11 +91,17 @@ export default class App extends Component {
   }
 
   render() {
-    const { score, targetInput, gameState } = this.state;
+    const { score, targetInput, flashIndex, gameState } = this.state;
     return (
       // <StyleDemo />
       gameState == GAME_PLAY
-      ? <GamePlay score={score} targetInput={targetInput} onPress={this._onPress} />
+      ? <GamePlay
+        score={score}
+        targetInput={targetInput}
+        flashIndex={flashIndex}
+        onPress={this._onPress}
+        onButtonFlashCompleted={this._onButtonFlashCompleted}
+        />
       : <GameOver score={score} replay={this._replay} />
     );
   }

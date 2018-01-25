@@ -1,16 +1,47 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   View,
   TouchableOpacity,
   StyleSheet,
-  Dimensions
+  Dimensions,
+  Animated,
+  Easing
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-class ColorButton extends Component {
+class ColorButton extends PureComponent {
+  state = {
+    buttonOpacity: new Animated.Value(1)
+  }
+
+  _flash = () => {
+    Animated.sequence([
+      Animated.timing(this.state.buttonOpacity, {
+        toValue: 0.3,
+        duration: 150,
+        easing: Easing.ease.in
+      }),
+      Animated.delay(200),
+      Animated.timing(this.state.buttonOpacity, {
+        toValue: 1,
+        duration: 150,
+        easing: Easing.ease.out
+      })
+    ]).start(this.props.onFlashCompleted);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.isFlashing !== this.props.isFlashing
+      && nextProps.isFlashing
+    ) {
+      this._flash();
+    }
+  }
+
   render() {
-    const { size } = this.props;
+    const { size, isFlashing } = this.props;
     return (
       <TouchableOpacity
         style={[
@@ -21,9 +52,13 @@ class ColorButton extends Component {
           }
         ]} 
         onPress={this.props.onPress}>
-        <View style={[ styles.colorView,
-          { backgroundColor: this.props.background } 
-        ]}></View>
+        <Animated.View style={[
+          styles.colorView,
+          {
+            opacity: this.state.buttonOpacity,
+            backgroundColor: this.props.background
+          } 
+        ]}></Animated.View>
       </TouchableOpacity>
     );
   }

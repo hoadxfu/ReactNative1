@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import {
   Text,
   View,
@@ -7,13 +7,20 @@ import {
   Platform
 } from 'react-native';
 import ColorButton from '../components/ColorButton';
+import Sound from 'react-native-sound';
 
 const { width, height } = Dimensions.get('window');
 
-class GamePlay extends Component {
+class GamePlay extends PureComponent {
   state = { 
     gameBoardSize: Math.min(width, height),
-    containerStyle: null
+    containerStyle: null,
+    buttonColors: [
+      '#84FF72',
+      '#FF3605',
+      '#9C11E8',
+      '#17A2FF'
+    ]
   }
 
   _onLayout = (event) => {
@@ -36,21 +43,42 @@ class GamePlay extends Component {
     }
   }
 
+  _propsForButtonIndex = (index) => {
+    const { gameBoardSize, buttonColors } = this.state;
+    const { onPress, targetInput, flashIndex, onButtonFlashCompleted } = this.props;
+    return {
+      onPress: () => onPress(index),
+      isFlashing: targetInput[flashIndex] === index,
+      onFlashCompleted: onButtonFlashCompleted,
+      size: gameBoardSize,
+      background: buttonColors[index]
+    }
+  }
+
+  componentDidMount() {
+    Sound.setCategory('Playback');
+    var whoosh = new Sound('pling1.mp3', Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+      whoosh.play();
+    });
+  }
+
   render() {
     const { gameBoardSize, containerStyle } = this.state;
-    // console.log(this.props.targetInput);
     return (
       <View style={[ styles.container, containerStyle ]} onLayout={this._onLayout}>
         <View style={styles.scoreContainer}>
           <Text style={{ fontSize: 36, paddingBottom: 16 }}>Score</Text>
           <Text style={{ fontSize: 34 }}>{this.props.score}</Text>
-          <Text>{this.props.targetInput.toString()}</Text>
         </View>
         <View style={[ styles.gameContainer, { width: gameBoardSize } ]}>
-          <ColorButton onPress={() => this.props.onPress(0)} background='red' size={gameBoardSize} />
-          <ColorButton onPress={() => this.props.onPress(1)} background='yellow' size={gameBoardSize} />
-          <ColorButton onPress={() => this.props.onPress(2)} background='blue' size={gameBoardSize} />
-          <ColorButton onPress={() => this.props.onPress(3)} background='green' size={gameBoardSize} />
+          <ColorButton {...this._propsForButtonIndex(0)} />
+          <ColorButton {...this._propsForButtonIndex(1)} />
+          <ColorButton {...this._propsForButtonIndex(2)} />
+          <ColorButton {...this._propsForButtonIndex(3)} />
         </View>
       </View>
     );
@@ -60,10 +88,11 @@ class GamePlay extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: (Platform.OS === 'ios') ? 20 : 0
+    backgroundColor: '#E8CA5F'
   },
   scoreContainer: {
     flexGrow: 1,
+    // marginTop: (Platform.OS === 'ios') ? 20 : 0,
     // paddingTop: 12,
     // paddingBottom: 12,
     // paddingLeft: 24,
