@@ -13,6 +13,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 import Big from 'big.js';
+import Unit from './components/Unit';
 
 const UNIT = {
   METRE: 0,
@@ -101,20 +102,20 @@ export default class App extends PureComponent {
           {UNIT_NAME.map((name, index) =>
             <View key={index} style={[
               styles.unitRow,
-              (index % 2 == 0) && {backgroundColor: 'rgb(98, 70, 133)'}
+              (index % 2 == 0) && { backgroundColor: 'rgb(98, 70, 133)' }
             ]}>
-              <TouchableOpacity onPress={() => this.handlePressBaseUnit(index)} style={styles.unitCol}>
-                <Text style={[
-                  styles.unitNameText,
-                  (index == baseUnit) && {color: '#e6e600'}
-                ]}>{name}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.handlePressConvertUnit(index)} style={styles.unitCol}>
-                <Text style={[
-                  styles.unitNameText,
-                  (index == convertUnit) && {color: '#e6e600'}
-                ]}>{name}</Text>
-              </TouchableOpacity>
+              <Unit
+                onPress={() => this.handlePressBaseUnit(index)}
+                selected={index == baseUnit}
+              >
+                {name}
+              </Unit>
+              <Unit
+                onPress={() => this.handlePressConvertUnit(index)}
+                selected={index == convertUnit}
+              >
+                {name}
+              </Unit>
             </View>
           )}
         </View>
@@ -149,12 +150,5 @@ const styles = StyleSheet.create({
   unitRow: {
     flexDirection: 'row',
     paddingHorizontal: 12
-  },
-  unitCol: {
-    flex: 1,
-    paddingVertical: 16,
-  },
-  unitNameText: {
-    color: '#fff'
   }
 });
