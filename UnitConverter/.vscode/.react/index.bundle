@@ -58539,6 +58539,14 @@ __d(function (global, require, module, exports, _dependencyMap) {
 
   var _big2 = _interopRequireDefault(_big);
 
+  var _ConvertColumn = require(_dependencyMap[4], "./components/ConvertColumn");
+
+  var _ConvertColumn2 = _interopRequireDefault(_ConvertColumn);
+
+  var _Theme = require(_dependencyMap[5], "./Theme");
+
+  var _Theme2 = _interopRequireDefault(_Theme);
+
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
   function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -58566,14 +58574,6 @@ __d(function (global, require, module, exports, _dependencyMap) {
     };
   }
 
-  var UNIT = {
-    METRE: 0,
-    DECIMETER: 1,
-    CENTIMETRE: 2,
-    MILIMETRE: 3
-  };
-  var UNIT_NAME = ['Metre', 'Decimeter', 'Centimetre', 'Milimetre'];
-
   var App = _wrapComponent("App")(function (_PureComponent) {
     _inherits(App, _PureComponent);
 
@@ -58589,218 +58589,64 @@ __d(function (global, require, module, exports, _dependencyMap) {
       }
 
       return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = App.__proto__ || Object.getPrototypeOf(App)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-        baseValue: 0,
-        convertedValue: 0,
-        baseUnit: UNIT.CENTIMETRE,
-        convertUnit: UNIT.DECIMETER
-      }, _this.handleConverter = function (baseValue) {
-        _this.setState({
+        items: [{
+          id: 1,
+          title: 'Meter',
+          ratio: 1
+        }, {
+          id: 2,
+          title: 'Decimeter',
+          ratio: 0.1
+        }, {
+          id: 3,
+          title: 'Centimeter',
+          ratio: 0.01
+        }, {
+          id: 4,
+          title: 'Milimeter',
+          ratio: 0.001
+        }],
+        baseValue: 0
+      }, _this._updateBaseValue = function (baseValue) {
+        return _this.setState({
           baseValue: baseValue
-        }, _this._convert);
-      }, _this.handlePressBaseUnit = function (baseUnit) {
-        _this.setState({
-          baseUnit: baseUnit
-        }, _this._convert);
-      }, _this.handlePressConvertUnit = function (convertUnit) {
-        _this.setState({
-          convertUnit: convertUnit
-        }, _this._convert);
-      }, _this._convert = function () {
-        var _this$state = _this.state,
-            baseValue = _this$state.baseValue,
-            convertedValue = _this$state.convertedValue,
-            baseUnit = _this$state.baseUnit,
-            convertUnit = _this$state.convertUnit;
-        var diff = convertUnit - baseUnit;
-        console.log(convertUnit, baseUnit);
-
-        if (diff > 0) {
-          _this.setState({
-            convertedValue: baseValue * Math.pow(10, Math.abs(diff))
-          });
-        } else if (diff < 0) {
-          _this.setState({
-            convertedValue: baseValue / Math.pow(10, Math.abs(diff))
-          });
-        } else {
-          _this.setState({
-            convertedValue: baseValue
-          });
-        }
+        });
       }, _temp), _possibleConstructorReturn(_this, _ret);
     }
 
     _createClass(App, [{
       key: "render",
       value: function render() {
-        var _this2 = this;
-
         var _state = this.state,
-            baseValue = _state.baseValue,
-            convertedValue = _state.convertedValue,
-            baseUnit = _state.baseUnit,
-            convertUnit = _state.convertUnit;
+            items = _state.items,
+            baseValue = _state.baseValue;
         return _react3.default.createElement(
           _reactNative.View,
           {
             style: styles.container,
             __source: {
               fileName: _jsxFileName,
-              lineNumber: 64
+              lineNumber: 32
             }
           },
-          _react3.default.createElement(
-            _reactNative.View,
-            {
-              style: styles.formContainer,
-              __source: {
-                fileName: _jsxFileName,
-                lineNumber: 65
-              }
-            },
-            _react3.default.createElement(
-              _reactNative.View,
-              {
-                style: styles.formCol,
-                __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 66
-                }
-              },
-              _react3.default.createElement(
-                _reactNative.Text,
-                {
-                  style: styles.formUnitText,
-                  __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 67
-                  }
-                },
-                UNIT_NAME[baseUnit]
-              ),
-              _react3.default.createElement(_reactNative.TextInput, {
-                style: styles.formUnitText,
-                keyboardType: "numeric",
-                onChangeText: function onChangeText(value) {
-                  return _this2.handleConverter(value);
-                },
-                value: baseValue.toString(),
-                __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 68
-                }
-              })
-            ),
-            _react3.default.createElement(
-              _reactNative.View,
-              {
-                style: styles.formCol,
-                __source: {
-                  fileName: _jsxFileName,
-                  lineNumber: 75
-                }
-              },
-              _react3.default.createElement(
-                _reactNative.Text,
-                {
-                  style: styles.formUnitText,
-                  __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 76
-                  }
-                },
-                UNIT_NAME[convertUnit]
-              ),
-              _react3.default.createElement(
-                _reactNative.Text,
-                {
-                  style: styles.formUnitText,
-                  __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 77
-                  }
-                },
-                convertedValue
-              )
-            )
-          ),
-          _react3.default.createElement(
-            _reactNative.View,
-            {
-              style: styles.listUnitContainer,
-              __source: {
-                fileName: _jsxFileName,
-                lineNumber: 80
-              }
-            },
-            UNIT_NAME.map(function (name, index) {
-              return _react3.default.createElement(
-                _reactNative.View,
-                {
-                  key: index,
-                  style: [styles.unitRow, index % 2 == 0 && {
-                    backgroundColor: 'rgb(98, 70, 133)'
-                  }],
-                  __source: {
-                    fileName: _jsxFileName,
-                    lineNumber: 82
-                  }
-                },
-                _react3.default.createElement(
-                  _reactNative.TouchableOpacity,
-                  {
-                    onPress: function onPress() {
-                      return _this2.handlePressBaseUnit(index);
-                    },
-                    style: styles.unitCol,
-                    __source: {
-                      fileName: _jsxFileName,
-                      lineNumber: 86
-                    }
-                  },
-                  _react3.default.createElement(
-                    _reactNative.Text,
-                    {
-                      style: [styles.unitNameText, index == baseUnit && {
-                        color: '#e6e600'
-                      }],
-                      __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 87
-                      }
-                    },
-                    name
-                  )
-                ),
-                _react3.default.createElement(
-                  _reactNative.TouchableOpacity,
-                  {
-                    onPress: function onPress() {
-                      return _this2.handlePressConvertUnit(index);
-                    },
-                    style: styles.unitCol,
-                    __source: {
-                      fileName: _jsxFileName,
-                      lineNumber: 92
-                    }
-                  },
-                  _react3.default.createElement(
-                    _reactNative.Text,
-                    {
-                      style: [styles.unitNameText, index == convertUnit && {
-                        color: '#e6e600'
-                      }],
-                      __source: {
-                        fileName: _jsxFileName,
-                        lineNumber: 93
-                      }
-                    },
-                    name
-                  )
-                )
-              );
-            })
-          )
+          _react3.default.createElement(_ConvertColumn2.default, {
+            items: items,
+            baseValue: baseValue,
+            updateBaseValue: this._updateBaseValue,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 33
+            }
+          }),
+          _react3.default.createElement(_ConvertColumn2.default, {
+            items: items,
+            baseValue: baseValue,
+            updateBaseValue: this._updateBaseValue,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 38
+            }
+          })
         );
       }
     }]);
@@ -58813,39 +58659,12 @@ __d(function (global, require, module, exports, _dependencyMap) {
   var styles = _reactNative.StyleSheet.create({
     container: {
       flex: 1,
+      flexDirection: 'row',
       marginTop: 20,
-      backgroundColor: 'rgb(120, 86, 162)'
-    },
-    formContainer: {
-      flexDirection: 'row',
-      paddingHorizontal: 12,
-      backgroundColor: 'rgb(83, 60, 112)'
-    },
-    formCol: {
-      flex: 1,
-      paddingVertical: 16
-    },
-    formUnitText: {
-      color: '#fff',
-      fontSize: 24,
-      marginVertical: 12
-    },
-    listUnitContainer: {
-      flex: 1
-    },
-    unitRow: {
-      flexDirection: 'row',
-      paddingHorizontal: 12
-    },
-    unitCol: {
-      flex: 1,
-      paddingVertical: 16
-    },
-    unitNameText: {
-      color: '#fff'
+      backgroundColor: _Theme2.default.bgPrimary
     }
   });
-},489,[109,128,12,491],"UnitConverter/src/App.js");
+},489,[109,128,12,491,493,495],"UnitConverter/src/App.js");
 __d(function (global, require, module, exports, _dependencyMap) {
   ;
 
@@ -59470,6 +59289,436 @@ __d(function (global, require, module, exports, _dependencyMap) {
     }
   })(this);
 },491,[],"big.js/big.js");
+__d(function (global, require, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = require(_dependencyMap[0], "react");
+
+  var _react3 = _interopRequireDefault(_react2);
+
+  var _index = require(_dependencyMap[1], "./../../node_modules/react-transform-hmr/lib/index.js");
+
+  var _index2 = _interopRequireDefault(_index);
+
+  var _jsxFileName = "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/ConvertColumn.js";
+
+  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  var _reactNative = require(_dependencyMap[2], "react-native");
+
+  var _UnitDisplay = require(_dependencyMap[3], "./UnitDisplay");
+
+  var _UnitDisplay2 = _interopRequireDefault(_UnitDisplay);
+
+  var _UnitSelector = require(_dependencyMap[4], "./UnitSelector");
+
+  var _UnitSelector2 = _interopRequireDefault(_UnitSelector);
+
+  var _Theme = require(_dependencyMap[5], "../Theme");
+
+  var _Theme2 = _interopRequireDefault(_Theme);
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _components = {
+    ConvertColumn: {
+      displayName: "ConvertColumn"
+    }
+  };
+
+  var _node_modulesReactTransformHmrLibIndexJs2 = (0, _index2.default)({
+    filename: "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/ConvertColumn.js",
+    components: _components,
+    locals: [module],
+    imports: [_react3.default]
+  });
+
+  function _wrapComponent(id) {
+    return function (Component) {
+      return _node_modulesReactTransformHmrLibIndexJs2(Component, id);
+    };
+  }
+
+  var ConvertColumn = _wrapComponent("ConvertColumn")(function (_PureComponent) {
+    _inherits(ConvertColumn, _PureComponent);
+
+    function ConvertColumn() {
+      var _ref;
+
+      var _temp, _this, _ret;
+
+      _classCallCheck(this, ConvertColumn);
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ConvertColumn.__proto__ || Object.getPrototypeOf(ConvertColumn)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+        selectedUnitId: 3
+      }, _this._handleSelectUnit = function (selectedUnitId) {
+        return _this.setState({
+          selectedUnitId: selectedUnitId
+        });
+      }, _this._keyExtractor = function (item, index) {
+        return item.id;
+      }, _this._renderItem = function (_ref2) {
+        var item = _ref2.item,
+            index = _ref2.index;
+        return _react3.default.createElement(_UnitSelector2.default, {
+          item: item,
+          isEven: index % 2 == 0,
+          onPress: function onPress() {
+            return _this._handleSelectUnit(item.id);
+          },
+          selected: _this.state.selectedUnitId == item.id,
+          __source: {
+            fileName: _jsxFileName,
+            lineNumber: 17
+          }
+        });
+      }, _this._handleChangeText = function (text) {
+        var selectedUnitId = _this.state.selectedUnitId;
+        var items = _this.props.items;
+        var selectedUnit = items.filter(function (item) {
+          return item.id === selectedUnitId;
+        })[0];
+
+        _this.props.updateBaseValue(parseFloat(text || 0) * selectedUnit.ratio);
+      }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(ConvertColumn, [{
+      key: "render",
+      value: function render() {
+        var selectedUnitId = this.state.selectedUnitId;
+        var _props = this.props,
+            items = _props.items,
+            baseValue = _props.baseValue;
+        var selectedUnit = items.filter(function (item) {
+          return item.id === selectedUnitId;
+        })[0];
+        return _react3.default.createElement(
+          _reactNative.View,
+          {
+            style: styles.column,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 41
+            }
+          },
+          _react3.default.createElement(_UnitDisplay2.default, {
+            title: selectedUnit.title,
+            value: baseValue / selectedUnit.ratio,
+            onChange: this._handleChangeText,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 42
+            }
+          }),
+          _react3.default.createElement(_reactNative.FlatList, {
+            data: items,
+            selected: this.state.selectedUnitId,
+            keyExtractor: this._keyExtractor,
+            renderItem: this._renderItem,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 47
+            }
+          })
+        );
+      }
+    }]);
+
+    return ConvertColumn;
+  }(_react2.PureComponent));
+
+  var styles = _reactNative.StyleSheet.create({
+    column: {
+      flex: 1
+    },
+    unitNameText: {
+      color: _Theme2.default.fontColorPrimary
+    }
+  });
+
+  exports.default = ConvertColumn;
+},493,[109,128,12,494,496,495],"UnitConverter/src/components/ConvertColumn.js");
+__d(function (global, require, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = require(_dependencyMap[0], "react");
+
+  var _react3 = _interopRequireDefault(_react2);
+
+  var _index = require(_dependencyMap[1], "./../../node_modules/react-transform-hmr/lib/index.js");
+
+  var _index2 = _interopRequireDefault(_index);
+
+  var _jsxFileName = "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/UnitDisplay.js";
+
+  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  var _reactNative = require(_dependencyMap[2], "react-native");
+
+  var _Theme = require(_dependencyMap[3], "../Theme");
+
+  var _Theme2 = _interopRequireDefault(_Theme);
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _components = {
+    UnitDisplay: {
+      displayName: "UnitDisplay"
+    }
+  };
+
+  var _node_modulesReactTransformHmrLibIndexJs2 = (0, _index2.default)({
+    filename: "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/UnitDisplay.js",
+    components: _components,
+    locals: [module],
+    imports: [_react3.default]
+  });
+
+  function _wrapComponent(id) {
+    return function (Component) {
+      return _node_modulesReactTransformHmrLibIndexJs2(Component, id);
+    };
+  }
+
+  var UnitDisplay = _wrapComponent("UnitDisplay")(function (_PureComponent) {
+    _inherits(UnitDisplay, _PureComponent);
+
+    function UnitDisplay() {
+      var _ref;
+
+      var _temp, _this, _ret;
+
+      _classCallCheck(this, UnitDisplay);
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = UnitDisplay.__proto__ || Object.getPrototypeOf(UnitDisplay)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+        text: _this.props.value.toString()
+      }, _this._onChange = function (text) {
+        _this.setState({
+          text: text
+        });
+
+        _this.props.onChange(text);
+      }, _this._onBlur = function () {
+        _this.setState({
+          text: _this.props.value.toString()
+        });
+      }, _temp), _possibleConstructorReturn(_this, _ret);
+    }
+
+    _createClass(UnitDisplay, [{
+      key: "componentWillReceiveProps",
+      value: function componentWillReceiveProps(nextProps) {
+        if (parseFloat(this.state.text) !== nextProps.value) {
+          this.setState({
+            text: nextProps.value.toString()
+          });
+        }
+      }
+    }, {
+      key: "render",
+      value: function render() {
+        return _react3.default.createElement(
+          _reactNative.View,
+          {
+            style: styles.container,
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 27
+            }
+          },
+          _react3.default.createElement(
+            _reactNative.Text,
+            {
+              style: styles.unitNameText,
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 28
+              }
+            },
+            this.props.title
+          ),
+          _react3.default.createElement(_reactNative.TextInput, {
+            value: this.state.text,
+            style: styles.unitValueText,
+            onChangeText: this._onChange,
+            onBlur: this._onBlur,
+            keyboardType: "numeric",
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 29
+            }
+          })
+        );
+      }
+    }]);
+
+    return UnitDisplay;
+  }(_react2.PureComponent));
+
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      backgroundColor: _Theme2.default.bgSecondary
+    },
+    unitNameText: {
+      color: _Theme2.default.fontColorPrimary,
+      fontSize: _Theme2.default.fontSizeLarge,
+      paddingHorizontal: 12,
+      paddingVertical: 16
+    },
+    unitValueText: {
+      color: _Theme2.default.fontColorPrimary,
+      fontSize: _Theme2.default.fontSizeLarge,
+      padding: 12
+    }
+  });
+
+  exports.default = UnitDisplay;
+},494,[109,128,12,495],"UnitConverter/src/components/UnitDisplay.js");
+__d(function (global, require, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Theme = {
+    bgPrimary: 'rgb(120, 86, 162)',
+    bgSecondary: 'rgb(83, 60, 112)',
+    bgSecondary2: 'rgb(98, 70, 133)',
+    fontColorPrimary: '#ffffff',
+    fontSizeLarge: 24
+  };
+},495,[],"UnitConverter/src/Theme.js");
+__d(function (global, require, module, exports, _dependencyMap) {
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  var _react2 = require(_dependencyMap[0], "react");
+
+  var _react3 = _interopRequireDefault(_react2);
+
+  var _index = require(_dependencyMap[1], "./../../node_modules/react-transform-hmr/lib/index.js");
+
+  var _index2 = _interopRequireDefault(_index);
+
+  var _jsxFileName = "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/UnitSelector.js";
+
+  var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  var _reactNative = require(_dependencyMap[2], "react-native");
+
+  var _Theme = require(_dependencyMap[3], "../Theme");
+
+  var _Theme2 = _interopRequireDefault(_Theme);
+
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+  function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+  var _components = {
+    UnitSelector: {
+      displayName: "UnitSelector"
+    }
+  };
+
+  var _node_modulesReactTransformHmrLibIndexJs2 = (0, _index2.default)({
+    filename: "/Users/hoadx/Documents/Projects/TechKids/ReactNative1/UnitConverter/src/components/UnitSelector.js",
+    components: _components,
+    locals: [module],
+    imports: [_react3.default]
+  });
+
+  function _wrapComponent(id) {
+    return function (Component) {
+      return _node_modulesReactTransformHmrLibIndexJs2(Component, id);
+    };
+  }
+
+  var UnitSelector = _wrapComponent("UnitSelector")(function (_Component) {
+    _inherits(UnitSelector, _Component);
+
+    function UnitSelector() {
+      _classCallCheck(this, UnitSelector);
+
+      return _possibleConstructorReturn(this, (UnitSelector.__proto__ || Object.getPrototypeOf(UnitSelector)).apply(this, arguments));
+    }
+
+    _createClass(UnitSelector, [{
+      key: "render",
+      value: function render() {
+        return _react3.default.createElement(
+          _reactNative.TouchableOpacity,
+          {
+            onPress: this.props.onPress,
+            style: [styles.container, this.props.isEven && {
+              backgroundColor: _Theme2.default.bgSecondary2
+            }],
+            __source: {
+              fileName: _jsxFileName,
+              lineNumber: 8
+            }
+          },
+          _react3.default.createElement(
+            _reactNative.Text,
+            {
+              style: [styles.nameText, this.props.selected && {
+                color: '#e6e600'
+              }],
+              __source: {
+                fileName: _jsxFileName,
+                lineNumber: 15
+              }
+            },
+            this.props.item.title
+          )
+        );
+      }
+    }]);
+
+    return UnitSelector;
+  }(_react2.Component));
+
+  exports.default = UnitSelector;
+
+  var styles = _reactNative.StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingVertical: 16,
+      paddingHorizontal: 12
+    },
+    nameText: {
+      color: '#fff',
+      fontSize: 16
+    }
+  });
+},496,[109,128,12,495],"UnitConverter/src/components/UnitSelector.js");
 require(23);
 require(11);
 //# sourceMappingURL=index.map
