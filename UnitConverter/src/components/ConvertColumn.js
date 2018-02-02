@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, FlatList, } from 'react-native';
 import UnitDisplay from './UnitDisplay';
 import UnitSelector from './UnitSelector';
 import Theme from '../Theme';
+import { connect } from 'react-redux';
+import { changeBaseValue } from '../actions';
 
 class ConvertColumn extends PureComponent {
   state = {
@@ -28,7 +30,7 @@ class ConvertColumn extends PureComponent {
     const selectedUnit = items.filter(
       item => item.id === selectedUnitId
     )[0];
-    this.props.updateBaseValue(parseFloat(text || 0) * selectedUnit.ratio );
+    this.props.changeBaseValue(parseFloat(text || 0) * selectedUnit.ratio );
   }
 
   render() {
@@ -64,4 +66,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ConvertColumn;
+const mapAppStateToProps = (state) => ({
+  baseValue: state.baseValue
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  changeBaseValue: (newValue) => dispatch(changeBaseValue(newValue))
+});
+
+export default connect(mapAppStateToProps, mapDispatchToProps)(ConvertColumn);
