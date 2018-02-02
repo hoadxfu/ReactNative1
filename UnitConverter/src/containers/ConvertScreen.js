@@ -8,24 +8,36 @@ import React, { PureComponent } from 'react';
 import {
   StyleSheet,
   View,
-  Button
+  Text,
+  TouchableOpacity
 } from 'react-native';
 import Big from 'big.js';
 import ConvertColumn from '../components/ConvertColumn';
 import Theme from '../Theme';
 
 import { categories } from '../database.json';
+import connect from 'react-redux/lib/connect/connect';
 
 class ConvertScreen extends PureComponent {
   state = {
-    items: categories[0].items
+    items: categories[this.props.category - 1].items
   }
 
   render() {
     const { items } = this.state;
     return (
-      <View style={{ flex: 1 }}>
-        <Button title='Toggle Screen' onPress={this.props.toggleScreen} />
+      <View style={{ marginTop: 20, flex: 1 }}>
+        <View style={styles.nav}>
+          <View style={styles.navLeft} />
+          <View style={styles.navCenter}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Unit Converter</Text>
+          </View>
+          <View style={styles.navRight}>
+            <TouchableOpacity style={styles.navButton} onPress={this.props.toggleScreen}>
+              <Text style={{ fontSize: 18, color: 'blue' }}>Categories</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={styles.container}>
           <ConvertColumn
             items={items}
@@ -43,9 +55,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    marginTop: 20,
     backgroundColor: Theme.bgPrimary
+  },
+  nav: {
+    flexDirection: 'row',
+  },
+  navLeft: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  navCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  navRight: {
+    flex: 1,
+    alignItems: 'flex-end'
+  },
+  navButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 12,
   }
 });
 
-export default ConvertScreen;
+const mapAppStateToProps = state => ({
+  category: state.category
+});
+
+export default connect(mapAppStateToProps)(ConvertScreen);
