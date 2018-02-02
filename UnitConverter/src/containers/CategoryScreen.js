@@ -27,18 +27,7 @@ class CategoryScreen extends PureComponent {
 
   render() {
     return (
-      <View style={{ marginTop: 20, flex: 1 }}>
-        <View style={styles.nav}>
-          <View style={styles.navLeft}>
-            <TouchableOpacity style={styles.navButton} onPress={this.props.toggleScreen}>
-              <Text style={{ fontSize: 18, color: 'blue' }}>Back</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.navCenter}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Categories</Text>
-          </View>
-          <View style={styles.navRight} />
-        </View>
+      <View style={{ flex: 1 }}>
         <FlatList
           style={{ backgroundColor: Theme.bgPrimary, flex: 1 }}
           data={categories}
@@ -49,29 +38,6 @@ class CategoryScreen extends PureComponent {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  nav: {
-    flexDirection: 'row',
-  },
-  navLeft: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  navCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  navRight: {
-    flex: 1,
-    alignItems: 'flex-end'
-  },
-  navButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-  }
-});
 
 const mapAppStateToProps = state => ({
   category: state.category

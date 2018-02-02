@@ -26,18 +26,7 @@ class ConvertScreen extends PureComponent {
   render() {
     const { items } = this.state;
     return (
-      <View style={{ marginTop: 20, flex: 1 }}>
-        <View style={styles.nav}>
-          <View style={styles.navLeft} />
-          <View style={styles.navCenter}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Unit Converter</Text>
-          </View>
-          <View style={styles.navRight}>
-            <TouchableOpacity style={styles.navButton} onPress={this.props.toggleScreen}>
-              <Text style={{ fontSize: 18, color: 'blue' }}>Categories</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+      <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <ConvertColumn
             items={items}
@@ -47,7 +36,7 @@ class ConvertScreen extends PureComponent {
           />
         </View>
       </View>
-      );
+    );
   }
 }
 
@@ -56,26 +45,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     backgroundColor: Theme.bgPrimary
-  },
-  nav: {
-    flexDirection: 'row',
-  },
-  navLeft: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  navCenter: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  navRight: {
-    flex: 1,
-    alignItems: 'flex-end'
-  },
-  navButton: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
   }
 });
 
