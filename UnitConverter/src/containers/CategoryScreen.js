@@ -9,9 +9,13 @@ import { connect } from 'react-redux';
 import { changeCategoryId } from '../actions';
 
 class CategoryScreen extends PureComponent {
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Categories'
+  });
+
   _handleChangeCategory = (id) => {
     this.props.changeCategoryId(id);
-    this.props.toggleScreen();
+    this.props.navigation.goBack();
   }
 
   _keyExtractor = item => item.id;

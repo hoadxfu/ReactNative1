@@ -2,7 +2,7 @@
   "categories": [
     {
       "id": 1,
-      "name": "length",
+      "name": "Length",
       "items": [
         { "id": 1, "title": "Meter", "ratio": 1 },
         { "id": 2, "title": "Decimeter", "ratio": 0.1 },
@@ -12,7 +12,7 @@
     },
     {
       "id": 2,
-      "name": "weight",
+      "name": "Weight",
       "items": [
         { "id": 1, "title": "Kilogram", "ratio": 1 },
         { "id": 2, "title": "Gram", "ratio": 0.001 },

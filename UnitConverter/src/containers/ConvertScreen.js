@@ -19,20 +19,41 @@ import { categories } from '../database.json';
 import connect from 'react-redux/lib/connect/connect';
 
 class ConvertScreen extends PureComponent {
-  state = {
-    items: categories[this.props.category - 1].items
+  static navigationOptions = ({ navigation }) => ({
+    title: navigation.state.params ? navigation.state.params.title : '',
+    headerRight: (
+      <TouchableOpacity
+        style={styles.navButton}
+        onPress={() => navigation.navigate('CategoryScreen')}>
+        <Text style={{ fontSize: 16, color: '#1980FB' }}>Categories</Text>
+      </TouchableOpacity>
+    )
+  });
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      title: this.props.category.name
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.category.name !== this.props.category.name) {
+      this.props.navigation.setParams({
+        title: nextProps.category.name
+      })
+    }
   }
 
   render() {
-    const { items } = this.state;
+    const { category } = this.props;
     return (
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <ConvertColumn
-            items={items}
+            items={category.items}
           />
           <ConvertColumn
-            items={items}
+            items={category.items}
           />
         </View>
       </View>
@@ -45,11 +66,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     backgroundColor: Theme.bgPrimary
+  },
+  navButton: {
+    paddingHorizontal: 12,
   }
 });
 
 const mapAppStateToProps = state => ({
-  category: state.category
+  category: categories[state.category - 1]
 });
 
 export default connect(mapAppStateToProps)(ConvertScreen);
