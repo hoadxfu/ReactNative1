@@ -1,17 +1,37 @@
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet, FlatList, } from 'react-native';
+import { View, Text, StyleSheet, FlatList, AsyncStorage } from 'react-native';
 import UnitDisplay from './UnitDisplay';
 import UnitSelector from './UnitSelector';
 import Theme from '../Theme';
 import { connect } from 'react-redux';
 import { changeBaseValue } from '../actions';
 
+const COLUMN = {
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT'
+}
+
 class ConvertColumn extends PureComponent {
   state = {
-    selectedUnitId: 3
+    selectedUnitId: 1
+  }
+  
+  componentWillMount() {
+    this._loadSelectedUnitId();
   }
 
-  _handleSelectUnit = (selectedUnitId) => this.setState({ selectedUnitId });
+  _loadSelectedUnitId = async () => {
+    const selectedUnitId = await AsyncStorage.getItem(`@selectedUnitId_${this.props.id}`);
+    console.log(selectedUnitId);
+    console.log(this.props.id);
+    this.setState({
+      selectedUnitId: parseInt(selectedUnitId) || 1
+    })
+  }
+
+  _handleSelectUnit = (selectedUnitId) =>
+    this.setState({ selectedUnitId },
+      () => AsyncStorage.setItem(`@selectedUnitId_${this.props.id}`, selectedUnitId.toString()));
 
   _keyExtractor = (item, index) => item.id;
 

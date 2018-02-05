@@ -18,6 +18,11 @@ import Theme from '../Theme';
 import { categories } from '../database.json';
 import connect from 'react-redux/lib/connect/connect';
 
+const COLUMN = {
+  LEFT: 'LEFT',
+  RIGHT: 'RIGHT'
+}
+
 class ConvertScreen extends PureComponent {
   static navigationOptions = ({ navigation }) => ({
     title: navigation.state.params ? navigation.state.params.title : '',
@@ -50,9 +55,11 @@ class ConvertScreen extends PureComponent {
       <View style={{ flex: 1 }}>
         <View style={styles.container}>
           <ConvertColumn
+            id={COLUMN.LEFT}
             items={category.items}
           />
           <ConvertColumn
+            id={COLUMN.RIGHT}
             items={category.items}
           />
         </View>
