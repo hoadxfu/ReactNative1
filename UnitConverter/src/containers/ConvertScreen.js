@@ -15,8 +15,7 @@ import Big from 'big.js';
 import ConvertColumn from '../components/ConvertColumn';
 import Theme from '../Theme';
 
-import { categories } from '../database.json';
-import connect from 'react-redux/lib/connect/connect';
+import { connect } from 'react-redux';
 
 const COLUMN = {
   LEFT: 'LEFT',
@@ -56,10 +55,12 @@ class ConvertScreen extends PureComponent {
         <View style={styles.container}>
           <ConvertColumn
             id={COLUMN.LEFT}
+            category={category}
             items={category.items}
           />
           <ConvertColumn
             id={COLUMN.RIGHT}
+            category={category}
             items={category.items}
           />
         </View>
@@ -80,7 +81,8 @@ const styles = StyleSheet.create({
 });
 
 const mapAppStateToProps = state => ({
-  category: categories[state.category - 1]
+  category: state.categories[state.category - 1],
+  categories: state.categories
 });
 
 export default connect(mapAppStateToProps)(ConvertScreen);

@@ -1,0 +1,1 @@
+export const LIST_GAME_REQUEST = 'LIST_GAME_REQUEST';

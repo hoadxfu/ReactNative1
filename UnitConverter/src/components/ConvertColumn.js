@@ -9,29 +9,41 @@ import { changeBaseValue } from '../actions';
 const COLUMN = {
   LEFT: 'LEFT',
   RIGHT: 'RIGHT'
-}
+};
 
 class ConvertColumn extends PureComponent {
   state = {
     selectedUnitId: 1
-  }
-  
+  };
+
   componentWillMount() {
     this._loadSelectedUnitId();
   }
 
-  _loadSelectedUnitId = async () => {
-    const selectedUnitId = await AsyncStorage.getItem(`@selectedUnitId_${this.props.id}`);
-    console.log(selectedUnitId);
-    console.log(this.props.id);
-    this.setState({
-      selectedUnitId: parseInt(selectedUnitId) || 1
-    })
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.category.id !== this.props.category.id) {
+      this.setState({
+        selectedUnitId: 1
+      })
+    }
   }
 
-  _handleSelectUnit = (selectedUnitId) =>
-    this.setState({ selectedUnitId },
-      () => AsyncStorage.setItem(`@selectedUnitId_${this.props.id}`, selectedUnitId.toString()));
+  _loadSelectedUnitId = async () => {
+    const selectedUnitId = await AsyncStorage.getItem(
+      `@selectedUnitId_${this.props.id}`
+    );
+    this.setState({
+      selectedUnitId: parseInt(selectedUnitId) || 1
+    });
+  };
+
+  _handleSelectUnit = selectedUnitId =>
+    this.setState({ selectedUnitId }, () =>
+      AsyncStorage.setItem(
+        `@selectedUnitId_${this.props.id}`,
+        selectedUnitId.toString()
+      )
+    );
 
   _keyExtractor = (item, index) => item.id;
 
@@ -44,26 +56,22 @@ class ConvertColumn extends PureComponent {
     />
   );
 
-  _handleChangeText = (text) => {
+  _handleChangeText = text => {
     const { selectedUnitId } = this.state;
     const { items } = this.props;
-    const selectedUnit = items.filter(
-      item => item.id === selectedUnitId
-    )[0];
-    this.props.changeBaseValue(parseFloat(text || 0) * selectedUnit.ratio );
-  }
+    const selectedUnit = items.filter(item => item.id === selectedUnitId)[0];
+    this.props.changeBaseValue(parseFloat(text || 0) * selectedUnit.ratio);
+  };
 
   render() {
     const { selectedUnitId } = this.state;
     const { items, baseValue } = this.props;
-    const selectedUnit = items.filter(
-      item => item.id === selectedUnitId
-    )[0];
+    const selectedUnit = items.filter(item => item.id === selectedUnitId)[0];
     return (
       <View style={styles.column}>
         <UnitDisplay
           title={selectedUnit.title}
-          value={baseValue/selectedUnit.ratio}
+          value={baseValue / selectedUnit.ratio}
           onChange={this._handleChangeText}
         />
         <FlatList
@@ -86,12 +94,12 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapAppStateToProps = (state) => ({
+const mapAppStateToProps = state => ({
   baseValue: state.baseValue
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  changeBaseValue: (newValue) => dispatch(changeBaseValue(newValue))
+const mapDispatchToProps = dispatch => ({
+  changeBaseValue: newValue => dispatch(changeBaseValue(newValue))
 });
 
 export default connect(mapAppStateToProps, mapDispatchToProps)(ConvertColumn);

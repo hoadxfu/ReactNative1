@@ -1,9 +1,14 @@
 import React, { PureComponent } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity
+} from 'react-native';
 
 import UnitSelector from '../components/UnitSelector';
 
-import { categories } from '../database.json';
 import Theme from '../Theme';
 import { connect } from 'react-redux';
 import { changeCategoryId } from '../actions';
@@ -13,10 +18,10 @@ class CategoryScreen extends PureComponent {
     title: 'Categories'
   });
 
-  _handleChangeCategory = (id) => {
+  _handleChangeCategory = id => {
     this.props.changeCategoryId(id);
     this.props.navigation.goBack();
-  }
+  };
 
   _keyExtractor = item => item.id;
 
@@ -34,7 +39,7 @@ class CategoryScreen extends PureComponent {
       <View style={{ flex: 1 }}>
         <FlatList
           style={{ backgroundColor: Theme.bgPrimary, flex: 1 }}
-          data={categories}
+          data={this.props.categories}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
         />
@@ -44,11 +49,12 @@ class CategoryScreen extends PureComponent {
 }
 
 const mapAppStateToProps = state => ({
-  category: state.category
+  category: state.category,
+  categories: state.categories
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeCategoryId: (id) => dispatch(changeCategoryId(id))
+  changeCategoryId: id => dispatch(changeCategoryId(id))
 });
 
 export default connect(mapAppStateToProps, mapDispatchToProps)(CategoryScreen);

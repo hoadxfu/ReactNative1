@@ -1,0 +1,20 @@
+{
+  "games": [
+    {
+      "id": 1,
+      "name": "Mahjong 2",
+      "players": [
+        { "id": 1, "name": "Shounen 1", "score": 1000 },
+        { "id": 2, "name": "Shounen 2", "score": -400 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Pocker Night",
+      "players": [
+        { "id": 1, "name": "Shounen 1", "score": 1000 },
+        { "id": 2, "name": "Shounen 2", "score": -400 }
+      ]
+    }
+  ]
+}
